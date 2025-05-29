@@ -3,7 +3,7 @@
 import { UI_UPDATE_INTERVAL, TOTAL_LAPS } from './constants.js';
 import { getCurrentGameState, setCurrentGameState } from './gameStates.js';
 import { GAME_STATE } from './constants.js';
-import audioManager from './audioManager.js'; // To interact with audio settings
+// import audioManager from './audioManager.js'; // Removed audioManager import
 
 class UIManager {
     constructor() {
@@ -24,7 +24,7 @@ class UIManager {
         this.volumeValueDisplay = document.getElementById('volumeValue');
         this.difficultySelect = document.getElementById('difficultySelect');
         this.graphicsQualitySelect = document.getElementById('graphicsQuality');
-        this.toggleMusicCheckbox = document.getElementById('toggleMusic');
+        this.toggleMusicCheckbox = document.getElementById('toggleMusic'); // This checkbox will now do nothing
 
         // Garage elements
         this.selectedCarImage = document.getElementById('selectedCarImage');
@@ -32,10 +32,10 @@ class UIManager {
         this.carTopSpeed = document.getElementById('carTopSpeed');
         this.carAcceleration = document.getElementById('carAcceleration');
         this.carHandling = document.getElementById('carHandling');
-        this.cars = [ // Example car data (would be loaded from a config file in real game)
-            { name: 'Speedster 5000', image: 'car1', topSpeed: '200 MPH', acceleration: '3.5s (0-60)', handling: 'Excellent' },
-            { name: 'Drifter X', image: 'car2', topSpeed: '180 MPH', acceleration: '4.2s (0-60)', handling: 'Very Good' },
-            { name: 'Bulldozer XL', image: 'car1', topSpeed: '150 MPH', acceleration: '5.0s (0-60)', handling: 'Good' }
+        this.cars = [ // Example car data (just for display purposes in garage)
+            { name: 'Red Racer', color: 'red', topSpeed: '200 MPH', acceleration: '3.5s (0-60)', handling: 'Excellent' },
+            { name: 'Blue Cruiser', color: 'blue', topSpeed: '180 MPH', acceleration: '4.2s (0-60)', handling: 'Very Good' },
+            { name: 'Green Monster', color: 'green', topSpeed: '150 MPH', acceleration: '5.0s (0-60)', handling: 'Good' }
         ];
         this.currentCarIndex = 0;
 
@@ -52,8 +52,10 @@ class UIManager {
      * @private
      */
     _setupEventListeners() {
-        this.volumeSlider.addEventListener('input', (event) => this._handleVolumeChange(event));
-        this.toggleMusicCheckbox.addEventListener('change', (event) => this._handleMusicToggle(event));
+        // Volume slider and toggleMusicCheckbox now have no effect as audioManager is removed
+        this.volumeSlider.addEventListener('input', (event) => { /* console.log('Volume slider moved:', event.target.value); */ });
+        this.toggleMusicCheckbox.addEventListener('change', (event) => { /* console.log('Music toggle changed:', event.target.checked); */ });
+        
         this.difficultySelect.addEventListener('change', (event) => console.log('Difficulty changed to:', event.target.value));
         this.graphicsQualitySelect.addEventListener('change', (event) => console.log('Graphics Quality changed to:', event.target.value));
 
@@ -62,37 +64,25 @@ class UIManager {
         document.getElementById('nextCarButton').addEventListener('click', () => this.navigateCar(1));
         document.getElementById('selectCarButton').addEventListener('click', () => this.selectCar());
 
-        // Attach global click listener for button click sounds
-        document.addEventListener('click', (event) => {
-            if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
-                audioManager.playSound('buttonClick', 0.5); // Play a click sound
-            }
-        });
+        // Global click listener for button click sounds removed as audioManager is removed
     }
 
     /**
-     * Updates the volume slider and display, and sets audio volume.
+     * Volume change handler (now does nothing as no audio manager)
      * @param {Event} event - The input event from the slider.
      * @private
      */
     _handleVolumeChange(event) {
-        const volume = parseInt(event.target.value);
-        this.volumeValueDisplay.textContent = `${volume}%`;
-        audioManager.setSfxVolume(volume / 100);
-        audioManager.setMusicVolume(volume / 100);
+        // Removed audioManager calls
     }
 
     /**
-     * Toggles background music based on checkbox state.
+     * Music toggle handler (now does nothing as no audio manager)
      * @param {Event} event - The change event from the checkbox.
      * @private
      */
     _handleMusicToggle(event) {
-        if (event.target.checked) {
-            audioManager.playBackgroundMusic();
-        } else {
-            audioManager.pauseBackgroundMusic();
-        }
+        // Removed audioManager calls
     }
 
     /**
@@ -100,10 +90,10 @@ class UIManager {
      * @private
      */
     _updateSettingsUI() {
-        const currentVolume = Math.round(audioManager.sfxVolume * 100);
-        this.volumeSlider.value = currentVolume;
-        this.volumeValueDisplay.textContent = `${currentVolume}%`;
-        this.toggleMusicCheckbox.checked = audioManager.isMusicPlaying; // Or a saved setting
+        // Values will be default, no interaction with audioManager
+        this.volumeSlider.value = 70; // Default value
+        this.volumeValueDisplay.textContent = `70%`;
+        this.toggleMusicCheckbox.checked = false; // Default to off as no music
     }
 
     /**
@@ -117,17 +107,22 @@ class UIManager {
 
     /**
      * Updates the garage UI to show the currently selected car.
+     * Image display will be removed or replaced with a placeholder.
      * @private
      */
     _updateGarageUI() {
         const car = this.cars[this.currentCarIndex];
         if (car) {
-            const carImage = assetLoader.getImage(car.image);
-            if (carImage) {
-                this.selectedCarImage.src = carImage.src;
-            } else {
-                this.selectedCarImage.src = 'images/placeholder_car.png'; // Fallback
+            // Remove image display logic
+            if (this.selectedCarImage) {
+                this.selectedCarImage.style.backgroundColor = car.color; // Show color
+                this.selectedCarImage.style.border = '2px solid white';
+                this.selectedCarImage.style.width = '100px';
+                this.selectedCarImage.style.height = '150px';
+                this.selectedCarImage.src = ''; // No image source
+                this.selectedCarImage.alt = `A ${car.color} car`;
             }
+            
             this.selectedCarName.textContent = car.name;
             this.carTopSpeed.textContent = car.topSpeed;
             this.carAcceleration.textContent = car.acceleration;
