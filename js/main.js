@@ -1,12 +1,12 @@
 // js/main.js
 
-import assetLoader from './assetLoader.js';
+// import assetLoader from './assetLoader.js'; // Removed assetLoader import
 import { initializeInput } from './inputHandler.js';
 import { setCurrentGameState, getCurrentGameState } from './gameStates.js';
 import { GAME_STATE, GAME_WIDTH, GAME_HEIGHT } from './constants.js';
 import { initializeGame, startGameLoop, stopGameLoop, resetGame } from './gameLoop.js';
 import uiManager from './uiManager.js';
-import audioManager from './audioManager.js';
+// import audioManager from './audioManager.js'; // Removed audioManager import
 
 // Get the main canvas element
 const gameCanvas = document.getElementById('gameCanvas');
@@ -21,15 +21,16 @@ if (gameCanvas) {
  * Initializes the game and sets up event listeners for state changes.
  */
 function init() {
-    // 1. Set initial game state to loading
-    setCurrentGameState(GAME_STATE.LOADING);
+    // 1. Set initial game state (no loading screen needed if no assets)
+    setCurrentGameState(GAME_STATE.MAIN_MENU); // Directly go to Main Menu
 
     // 2. Initialize input handlers (for UI buttons as well)
     initializeInput();
 
     // 3. Initialize game core components (Car, Track, Camera, Physics, Rendering)
-    // This part runs once after assets are loaded, when we switch to MAIN_MENU state.
-    // It's called when 'Start Game' button is clicked for the first time or on reset.
+    // This part runs once when the game starts.
+    initializeGame(gameCanvas);
+
 
     // Handle state transitions for game logic
     document.addEventListener('gameStateChange', (event) => {
@@ -38,9 +39,8 @@ function init() {
 
         switch (newState) {
             case GAME_STATE.MAIN_MENU:
-                audioManager.playBackgroundMusic();
+                // audioManager.playBackgroundMusic(); // Removed audioManager call
                 stopGameLoop(); // Ensure game loop is stopped when in menu
-                // Optionally reset game state here if returning from a race
                 break;
             case GAME_STATE.IN_GAME:
                 // Only reset if it's a fresh start, not just unpausing
@@ -48,14 +48,15 @@ function init() {
                     resetGame(); // Reset car positions, laps, etc.
                 }
                 startGameLoop(); // Start or resume the game loop
-                audioManager.playBackgroundMusic(); // Ensure music plays
+                // audioManager.playBackgroundMusic(); // Removed audioManager call
                 break;
             case GAME_STATE.PAUSED:
                 stopGameLoop(); // Pause the game loop
-                audioManager.pauseBackgroundMusic();
+                // audioManager.pauseBackgroundMusic(); // Removed audioManager call
                 break;
             case GAME_STATE.LOADING:
-                // Loading screen already active, assetLoader will handle transition
+                // This state is effectively skipped now, but remains for structure.
+                setCurrentGameState(GAME_STATE.MAIN_MENU); // Immediately move to Main Menu
                 break;
             case GAME_STATE.RACE_RESULTS:
             case GAME_STATE.GARAGE:
@@ -63,24 +64,16 @@ function init() {
             case GAME_STATE.CONTROLS:
             case GAME_STATE.ABOUT:
                 stopGameLoop(); // Ensure game loop is stopped for these UI screens
-                audioManager.pauseBackgroundMusic(); // Pause music when on UI screens
+                // audioManager.pauseBackgroundMusic(); // Removed audioManager call
                 break;
             default:
                 break;
         }
     });
 
-    // 4. Load all game assets
-    assetLoader.loadAllAssets().then(() => {
-        console.log('Assets loaded, ready for main menu.');
-        // Once assets are loaded, initialize game components
-        initializeGame(gameCanvas);
-        // And then transition to the main menu
-        setCurrentGameState(GAME_STATE.MAIN_MENU);
-    }).catch(error => {
-        console.error('Initial asset loading failed:', error);
-        uiManager.showMessagePopup(`Failed to load game. Please check your internet connection and try again. Error: ${error.message}`);
-    });
+    // 4. Asset loading logic removed.
+    // Since no assets, game starts directly to main menu.
+    uiManager.showMessagePopup("Game Loaded! (No external assets)"); // Optional: show a message
 }
 
 // Start the initialization process when the DOM is fully loaded
