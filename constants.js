@@ -50,16 +50,16 @@ const ASSET_PATHS = {
     images: {
         // Car images (finding direct, stable links with transparency is hard)
         // These are generic and may have white backgrounds or be low res.
-        car1: 'https://www.topviewpng.com/uploads/preview/top-view-of-a-small-red-car-11563229762n2z9s7g4q0.png', // Small red car
-        car2: 'https://png.pngtree.com/png-vector/20220627/ourmid/pngtree-top-view-blue-car-clip-art-png-image_5360980.png', // Small blue car
+        car1: 'https://ibb.co/7JYBxdb9', // Small red car
+        car2: 'https://ibb.co/7JYBxdb9', // Small blue car
         
         // Tree/Bush images
-        tree1: 'https://www.pngall.com/wp-content/uploads/11/Small-Pine-Tree-PNG-Image.png', // Generic pine tree
-        bush1: 'https://www.pngall.com/wp-content/uploads/11/Bush-PNG-Pic.png', // Generic bush
+        tree1: 'https://ibb.co/7JYBxdb9', // Generic pine tree
+        bush1: 'https://ibb.co/7JYBxdb9', // Generic bush
 
         // Background (simple pattern or sky - a single background image might not fit seamlessly)
         // This is a textured background, not a continuous road.
-        background: 'https://i.ibb.co/sK6f8s2/seamless-road-texture.png', // Example of a road texture (if used for background)
+        background: 'https://ibb.co/7JYBxdb9', // Example of a road texture (if used for background)
     },
     sounds: {
         // Sound effects (Finding direct, stable, and appropriately themed MP3s is challenging)
