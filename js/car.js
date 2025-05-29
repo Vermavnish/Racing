@@ -1,182 +1,199 @@
 // js/car.js
 
 import {
-    CAR_MAX_SPEED, CAR_ACCELERATION, CAR_DECELERATION, CAR_BRAKING_POWER,
-    CAR_TURN_SPEED, CAR_FRICTION, CAR_REVERSE_SPEED_MULTIPLIER, ASSET_PATHS
+    CAR_MAX_SPEED,
+    CAR_ACCELERATION,
+    CAR_DECELERATION,
+    CAR_BRAKING_POWER,
+    CAR_FRICTION,
+    CAR_TURN_SPEED,
+    CAR_REVERSE_SPEED_MULTIPLIER,
+    SEGMENT_LENGTH,
+    TRACK_WIDTH
 } from './constants.js';
-import assetLoader from './assetLoader.js'; // Import the asset loader
 
 class Car {
     /**
-     * @param {string} type - The type/key of the car (e.g., 'player', 'ai1').
-     * @param {number} x - Initial X position.
-     * @param {number} y - Initial Y position.
-     * @param {number} angle - Initial rotation angle in radians.
-     * @param {number} maxSpeed - Max speed for this specific car.
-     * @param {string} imageKey - The key for the car image in assetLoader.
+     * @param {string} type - 'player' or 'ai'.
+     * @param {number} x - Initial X position (horizontal offset from track center).
+     * @param {number} y - Initial Y position (depth along the track).
+     * @param {number} angle - Initial angle of the car (in radians).
+     * @param {HTMLImageElement} [image] - The image object for the car.
+     * @param {string} color - The color of the car (used when no image).
      * @param {boolean} isPlayer - True if this is the player's car.
      */
-    constructor(type, x, y, angle, maxSpeed, imageKey, isPlayer = false) {
+    constructor(type, x, y, angle, image, color, isPlayer = false) {
         this.type = type;
-        this.x = x;
-        this.y = y;
-        this.angle = angle; // Radians
-        this.speed = 0;
-        this.maxSpeed = maxSpeed || CAR_MAX_SPEED;
+        this.x = x; // Horizontal position on the track (world units)
+        this.y = y; // Vertical position on the track (depth in world units)
+        this.angle = angle; // Current angle of the car (radians)
+        this.speed = 0; // Current speed
+        this.maxSpeed = CAR_MAX_SPEED;
         this.acceleration = CAR_ACCELERATION;
         this.deceleration = CAR_DECELERATION;
         this.brakingPower = CAR_BRAKING_POWER;
-        this.turnSpeed = CAR_TURN_SPEED;
         this.friction = CAR_FRICTION;
-        this.isPlayer = isPlayer;
+        this.turnSpeed = CAR_TURN_SPEED;
+        this.reverseSpeedMultiplier = CAR_REVERSE_SPEED_MULTIPLIER;
 
-        this.image = assetLoader.getImage(imageKey);
-        if (!this.image) {
-            console.warn(`Car image not loaded for key: ${imageKey}. Using placeholder.`);
-            // Create a small placeholder if image fails to load
-            this.image = { width: 50, height: 100, src: '' };
-        }
-        this.width = this.image.width || 50; // Default if image dimensions not available
-        this.height = this.image.height || 100;
+        this.width = 60; // Visual width (scaled by projection)
+        this.height = 100; // Visual height (scaled by projection)
+        this.color = color; // Color for drawing if no image is used
+        // this.image = image; // Removed image property as we are not using assets
 
-        // Additional properties for game logic
-        this.lap = 0;
-        this.currentSegmentIndex = 0; // Current track segment the car is on
-        this.distanceFromSegmentStart = 0; // Distance traveled along the current segment
+        this.isPlayer = isPlayer; // True if this is the player's car
         this.isAccelerating = false;
         this.isBraking = false;
         this.isTurningLeft = false;
         this.isTurningRight = false;
         this.isSkidding = false; // For visual/audio effects
+
+        this.lap = 0; // Current lap number
+        this.currentSegmentIndex = 0; // The index of the track segment the car is currently on
+        this.distanceFromSegmentStart = 0; // Distance of the car from the start of its current segment
+        this.lastCrossedZ = 0; // To help with lap detection
+
+        // AI specific properties (if this is an AI car)
+        if (!this.isPlayer) {
+            this.targetLane = 0; // -1 for left, 0 for center, 1 for right
+            this.laneOffset = 0; // Current offset from track center for AI
+            this.targetSpeed = this.maxSpeed * (0.8 + Math.random() * 0.2); // AI target speed
+            this.changeLaneTimer = 0;
+            this.changeLaneInterval = 2000 + Math.random() * 3000; // AI changes lane every 2-5 seconds
+        }
     }
 
     /**
-     * Updates the car's position and speed based on input/AI and physics.
-     * @param {number} deltaTime - Time elapsed since the last update (in milliseconds).
-     * @param {function} isKeyPressed - Function to check key press state (for player car).
-     * @param {object} track - The current track object.
+     * Updates the car's state based on input and delta time.
+     * @param {number} deltaTime - Time elapsed since last update in milliseconds.
+     * @param {Function} isKeyPressed - Function from inputHandler to check key state.
+     * @param {Track} track - The game track object.
      */
     update(deltaTime, isKeyPressed, track) {
-        const dtSeconds = deltaTime / 1000; // Convert to seconds for physics calculations
+        const dt = deltaTime / 1000; // Convert to seconds
 
-        if (this.isPlayer) {
-            this.handlePlayerInput(dtSeconds, isKeyPressed);
-        } else {
-            this.handleAIInput(dtSeconds, track); // AI logic
-        }
-
-        // Apply acceleration/deceleration
-        if (this.isAccelerating) {
-            this.speed += this.acceleration * dtSeconds * 60; // Scale acceleration for smoother feel
-        } else if (this.isBraking) {
-            this.speed -= this.brakingPower * dtSeconds * 60;
-        } else {
-            this.speed *= (this.friction ** dtSeconds); // Apply friction
-        }
-
-        // Limit speed
-        this.speed = Math.max(0, Math.min(this.speed, this.maxSpeed));
-        if (this.speed < 0 && !this.isBraking) { // If reversing without brake
-            this.speed = Math.max(-this.maxSpeed * CAR_REVERSE_SPEED_MULTIPLIER, this.speed);
-        }
-
-        // Apply turning
-        if (this.speed > 0.1 || this.speed < -0.1) { // Only turn if moving
-            if (this.isTurningLeft) {
-                this.angle -= this.turnSpeed * dtSeconds * (this.speed / this.maxSpeed); // Turn slower at low speeds
-            }
-            if (this.isTurningRight) {
-                this.angle += this.turnSpeed * dtSeconds * (this.speed / this.maxSpeed);
-            }
-            this.angle = this.angle % (2 * Math.PI); // Keep angle within 0 to 2*PI
-        }
-
-        // Update position
-        this.x += Math.sin(this.angle) * this.speed * dtSeconds;
-        this.y -= Math.cos(this.angle) * this.speed * dtSeconds; // Y-axis is inverted for canvas
-
-        // Basic boundary check (e.g., prevent car from leaving track visually if not using full track physics)
-        // More robust boundary/collision will be in physics.js
-    }
-
-    /**
-     * Handles player input and sets acceleration/turning flags.
-     * @param {number} dtSeconds - Delta time in seconds.
-     * @param {function} isKeyPressed - Function to check key press state.
-     */
-    handlePlayerInput(dtSeconds, isKeyPressed) {
-        this.isAccelerating = isKeyPressed('ArrowUp') || isKeyPressed('KeyW');
-        this.isBraking = isKeyPressed('ArrowDown') || isKeyPressed('KeyS');
-        this.isTurningLeft = isKeyPressed('ArrowLeft') || isKeyPressed('KeyA');
-        this.isTurningRight = isKeyPressed('ArrowRight') || isKeyPressed('KeyD');
-
-        // Simple skid detection (can be more complex)
-        if (this.speed > 50 && (this.isTurningLeft || this.isTurningRight) && !this.isAccelerating && !this.isBraking) {
-             this.isSkidding = true;
-        } else {
-            this.isSkidding = false;
-        }
-
-        // If both accelerate and brake are pressed, treat as brake
-        if (this.isAccelerating && this.isBraking) {
-            this.isAccelerating = false;
-        }
-    }
-
-    /**
-     * Handles AI car movement logic. (Very basic AI placeholder)
-     * @param {number} dtSeconds - Delta time in seconds.
-     * @param {object} track - The current track object.
-     */
-    handleAIInput(dtSeconds, track) {
-        // This is a very simplistic AI: just tries to drive forward.
-        // A real AI would need to know its position on the track,
-        // follow waypoints, avoid other cars, consider track curves, etc.
-
-        this.isAccelerating = true; // Always try to accelerate
-        this.isBraking = false; // Never brake
+        this.isAccelerating = false;
+        this.isBraking = false;
         this.isTurningLeft = false;
         this.isTurningRight = false;
+        this.isSkidding = false;
 
-        // Make AI slightly slower than player to be fair
-        this.maxSpeed = CAR_MAX_SPEED * 0.9;
+        if (this.isPlayer) {
+            // Player Input Handling
+            if (isKeyPressed('ArrowUp') || isKeyPressed('w')) {
+                this.speed += this.acceleration * dt;
+                this.isAccelerating = true;
+            } else if (isKeyPressed('ArrowDown') || isKeyPressed('s')) {
+                // If moving forward, brake. If stationary or reversing, accelerate backward.
+                if (this.speed > 0) {
+                    this.speed -= this.brakingPower * dt;
+                    this.isBraking = true;
+                } else {
+                    this.speed -= this.acceleration * CAR_REVERSE_SPEED_MULTIPLIER * dt;
+                    this.isAccelerating = true; // Still "accelerating" but in reverse
+                }
+            } else {
+                // Decelerate if no acceleration/braking input
+                if (this.speed > 0) {
+                    this.speed -= this.deceleration * dt;
+                } else if (this.speed < 0) {
+                    this.speed += this.deceleration * dt;
+                }
+            }
 
-        // Basic AI turning logic (needs proper track awareness)
-        // For a simple demo, AI will just drive straight or randomly wobble
-        // if (Math.random() > 0.99) { // Small chance to turn
-        //     this.isTurningLeft = Math.random() > 0.5;
-        //     this.isTurningRight = !this.isTurningLeft;
-        // } else {
-        //     this.isTurningLeft = false;
-        //     this.isTurningRight = false;
-        // }
+            if (isKeyPressed('ArrowLeft') || isKeyPressed('a')) {
+                if (this.speed !== 0) {
+                    this.angle -= this.turnSpeed * (this.speed / this.maxSpeed) * dt;
+                    this.isTurningLeft = true;
+                    if (Math.abs(this.speed) > 50) this.isSkidding = true; // Skid if turning at speed
+                }
+            }
+            if (isKeyPressed('ArrowRight') || isKeyPressed('d')) {
+                if (this.speed !== 0) {
+                    this.angle += this.turnSpeed * (this.speed / this.maxSpeed) * dt;
+                    this.isTurningRight = true;
+                    if (Math.abs(this.speed) > 50) this.isSkidding = true; // Skid if turning at speed
+                }
+            }
+        } else {
+            // AI Input Handling
+            this._handleAIInput(dt, track);
+        }
+
+        // Apply friction
+        this.speed *= (this.friction ** dt); // Friction over time
+
+        // Clamp speed
+        this.speed = Math.max(-this.maxSpeed * this.reverseSpeedMultiplier, Math.min(this.speed, this.maxSpeed));
+
+        // Update position based on speed and angle
+        // In this 2D perspective, car.y is depth (Z), car.x is horizontal.
+        // Car's movement along the track is primarily on the Y axis.
+        this.y += this.speed * dt; // Move along the track (depth)
+
+        // Adjust X position based on angle and speed for steering effect
+        // A simple steering model: car moves horizontally on its local X axis
+        this.x += Math.sin(this.angle) * this.speed * 0.001 * dt; // Small horizontal drift based on angle
+
+        // Keep angle within -PI to PI
+        if (this.angle > Math.PI) this.angle -= Math.PI * 2;
+        if (this.angle < -Math.PI) this.angle += Math.PI * 2;
+
+        // Update current segment index based on car's Y position
+        this.currentSegmentIndex = Math.floor(this.y / SEGMENT_LENGTH);
+        // Ensure index wraps around if track is looping
+        this.currentSegmentIndex = this.currentSegmentIndex % track.segments.length;
+        if (this.currentSegmentIndex < 0) {
+            this.currentSegmentIndex += track.segments.length;
+        }
+
+        // Calculate distance from segment start for accurate road rendering
+        this.distanceFromSegmentStart = this.y % SEGMENT_LENGTH;
+        if (this.distanceFromSegmentStart < 0) {
+            this.distanceFromSegmentStart += SEGMENT_LENGTH;
+        }
     }
 
     /**
-     * Draws the car on the canvas. This is a placeholder for `rendering.js`.
-     * The actual drawing will be handled by the Rendering module.
-     * @param {CanvasRenderingContext2D} ctx - The 2D rendering context of the canvas.
-     * @param {object} camera - The camera object, to determine view.
+     * Basic AI behavior.
+     * @param {number} dt - Delta time in seconds.
+     * @param {Track} track - The track object.
+     * @private
      */
-    draw(ctx, camera) {
-        if (!this.image) {
-            console.warn("Car image not available for drawing.");
-            return; // Don't draw if image isn't loaded
+    _handleAIInput(dt, track) {
+        // Accelerate towards target speed
+        if (this.speed < this.targetSpeed) {
+            this.speed += this.acceleration * dt;
+        } else {
+            this.speed -= this.deceleration * dt;
         }
 
-        // This drawing function will be moved to rendering.js later,
-        // but included here for a complete Car class idea.
-        ctx.save();
-        ctx.translate(this.x - camera.x, this.y - camera.y); // Translate to world coordinates relative to camera
-        ctx.rotate(this.angle); // Rotate to car's angle
-        ctx.drawImage(
-            this.image,
-            -this.width / 2, // Draw from center
-            -this.height / 2,
-            this.width,
-            this.height
-        );
-        ctx.restore();
+        // Clamp speed
+        this.speed = Math.max(0, Math.min(this.speed, this.maxSpeed));
+
+        // Basic lane keeping and changing
+        const currentSegment = track.getSegment(this.y);
+        const roadCenter = (currentSegment.p1.x + currentSegment.p2.x) / 2; // Center of the road at current segment
+        const targetX = roadCenter + this.targetLane * (TRACK_WIDTH / 4); // Target X based on lane
+
+        // Steer towards targetX
+        const steerFactor = 0.005; // How strongly AI steers
+        if (this.x < targetX - 5) {
+            this.angle += this.turnSpeed * steerFactor * dt;
+            this.isTurningRight = true;
+        } else if (this.x > targetX + 5) {
+            this.angle -= this.turnSpeed * steerFactor * dt;
+            this.isTurningLeft = true;
+        }
+
+        // Randomly change lane target
+        this.changeLaneTimer += dt * 1000;
+        if (this.changeLaneTimer >= this.changeLaneInterval) {
+            // Randomly choose a new lane: -1 (left), 0 (center), 1 (right)
+            this.targetLane = Math.floor(Math.random() * 3) - 1;
+            this.changeLaneTimer = 0;
+            this.changeLaneInterval = 2000 + Math.random() * 3000;
+        }
     }
 }
 
