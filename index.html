@@ -3,152 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Racing Game</title>
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <title>Retro Racing Game</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/ui-elements.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="1280" height="720"></canvas>
 
-    <div id="game-wrapper">
         <div id="loading-screen" class="game-screen active-screen">
-            <div class="loader"></div>
-            <p>Loading Game Assets... Please wait.</p>
-            <div class="loading-progress-bar-container">
-                <div id="loading-progress-bar" class="loading-progress-bar"></div>
+            <div class="loading-bar-container">
+                <div id="loading-progress-bar" class="loading-bar"></div>
             </div>
-            <div id="loading-status-text">Initializing...</div>
+            <p id="loading-status-text">Initializing Game...</p>
         </div>
 
         <div id="main-menu-screen" class="game-screen">
-            <h1 class="game-title">Velocity Rush</h1>
-            <div class="menu-options">
+            <h1 class="game-title">RETRO RACER</h1>
+            <div class="menu-buttons">
                 <button id="startGameButton" class="menu-button">Start Race</button>
                 <button id="garageButton" class="menu-button">Garage</button>
                 <button id="settingsButton" class="menu-button">Settings</button>
                 <button id="controlsButton" class="menu-button">Controls</button>
                 <button id="aboutButton" class="menu-button">About</button>
             </div>
-            <div class="game-version">Version 1.0.0</div>
-        </div>
-
-        <div id="garage-screen" class="game-screen">
-            <h2 class="screen-title">Your Garage</h2>
-            <div class="car-selection-container">
-                <div class="car-display">
-                    <img id="selectedCarImage" src="images/cars/car1.png" alt="Selected Car">
-                    <p id="selectedCarName">Speedster 5000</p>
-                </div>
-                <div class="car-navigation">
-                    <button id="prevCarButton" class="nav-button">&lt;</button>
-                    <button id="nextCarButton" class="nav-button">&gt;</button>
-                </div>
-            </div>
-            <div class="car-stats">
-                <h3>Stats:</h3>
-                <p>Top Speed: <span id="carTopSpeed">200 MPH</span></p>
-                <p>Acceleration: <span id="carAcceleration">0-60 in 3.5s</span></p>
-                <p>Handling: <span id="carHandling">Excellent</span></p>
-            </div>
-            <button id="selectCarButton" class="action-button">Select Car</button>
-            <button id="backToMainMenuFromGarage" class="back-button">Back to Menu</button>
-        </div>
-
-        <div id="settings-screen" class="game-screen">
-            <h2 class="screen-title">Game Settings</h2>
-            <div class="setting-item">
-                <label for="volumeSlider">Volume:</label>
-                <input type="range" id="volumeSlider" min="0" max="100" value="75" class="slider">
-                <span id="volumeValue">75%</span>
-            </div>
-            <div class="setting-item">
-                <label for="difficultySelect">Difficulty:</label>
-                <select id="difficultySelect" class="dropdown">
-                    <option value="easy">Easy</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="hard">Hard</option>
-                    <option value="expert">Expert</option>
-                </select>
-            </div>
-            <div class="setting-item">
-                <label for="graphicsQuality">Graphics Quality:</label>
-                <select id="graphicsQuality" class="dropdown">
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high" selected>High</option>
-                </select>
-            </div>
-            <div class="setting-item">
-                <input type="checkbox" id="toggleMusic" checked>
-                <label for="toggleMusic">Play Background Music</label>
-            </div>
-            <button id="saveSettingsButton" class="action-button">Save Settings</button>
-            <button id="backToMainMenuFromSettings" class="back-button">Back to Menu</button>
-        </div>
-
-        <div id="controls-screen" class="game-screen">
-            <h2 class="screen-title">Controls</h2>
-            <div class="controls-list">
-                <p><strong>Accelerate:</strong> <span class="key-display">Arrow Up</span> or <span class="key-display">W</span></p>
-                <p><strong>Brake:</strong> <span class="key-display">Arrow Down</span> or <span class="key-display">S</span></p>
-                <p><strong>Steer Left:</strong> <span class="key-display">Arrow Left</span> or <span class="key-display">A</span></p>
-                <p><strong>Steer Right:</strong> <span class="key-display">Arrow Right</span> or <span class="key-display">D</span></p>
-                <p><strong>Handbrake:</strong> <span class="key-display">Spacebar</span></p>
-                <p><strong>Pause Game:</strong> <span class="key-display">P</span> or <span class="key-display">Escape</span></p>
-            </div>
-            <button id="backToMainMenuFromControls" class="back-button">Back to Menu</button>
-        </div>
-
-        <div id="about-screen" class="game-screen">
-            <h2 class="screen-title">About Velocity Rush</h2>
-            <p>Developed by [Your Name/Team Name]</p>
-            <p>Special Thanks to [Credits]</p>
-            <p>&copy; 2025 All Rights Reserved.</p>
-            <button id="backToMainMenuFromAbout" class="back-button">Back to Menu</button>
         </div>
 
         <div id="game-screen" class="game-screen">
-            <canvas id="gameCanvas" width="1280" height="720"></canvas>
-
             <div class="in-game-ui">
-                <div id="speedometer" class="ui-panel">Speed: <span id="currentSpeedValue">0</span> MPH</div>
-                <div id="lapCounter" class="ui-panel">Lap: <span id="currentLapValue">1</span> / <span id="totalLapsValue">3</span></div>
-                <div id="timer" class="ui-panel">Time: <span id="gameTimerValue">00:00.00</span></div>
-                <div id="position" class="ui-panel">Pos: <span id="playerRankValue">1</span> / <span id="totalRacersValue">8</span></div>
-                <div id="lapTimesDisplay" class="ui-panel">
-                    <h3>Lap Times</h3>
+                <div class="ui-section speed-meter">
+                    <span class="ui-label">SPEED</span>
+                    <span id="currentSpeedValue" class="ui-value">0</span><span class="ui-unit">MPH</span>
+                </div>
+                <div class="ui-section lap-counter">
+                    <span class="ui-label">LAP</span>
+                    <span id="currentLapValue" class="ui-value">0</span> / <span id="totalLapsValue" class="ui-value">3</span>
+                </div>
+                <div class="ui-section timer">
+                    <span class="ui-label">TIME</span>
+                    <span id="gameTimerValue" class="ui-value">00:00.00</span>
+                </div>
+                <div class="ui-section rank">
+                    <span class="ui-label">RANK</span>
+                    <span id="playerRankValue" class="ui-value">1</span> / <span id="totalRacersValue" class="ui-value">1</span>
+                </div>
+                <div id="lapTimesDisplay" class="ui-section lap-times">
+                    <span class="ui-label">LAST LAPS</span>
                     <ul id="lapTimesList">
                         </ul>
                 </div>
-                <div id="minimapContainer" class="ui-panel"></div>
             </div>
+            <div id="minimapContainer" class="minimap-container">
+                </div>
+        </div>
 
-            <div id="pause-menu" class="game-overlay">
-                <h2 class="overlay-title">Game Paused</h2>
-                <button id="resumeGameButton" class="overlay-button">Resume</button>
-                <button id="restartRaceButton" class="overlay-button">Restart Race</button>
-                <button id="quitToMenuButton" class="overlay-button">Quit to Main Menu</button>
+        <div id="pause-menu" class="overlay-menu">
+            <h2>PAUSED</h2>
+            <div class="menu-buttons">
+                <button id="resumeGameButton" class="menu-button">Resume</button>
+                <button id="restartRaceButton" class="menu-button">Restart Race</button>
+                <button id="quitToMenuButton" class="menu-button">Quit to Menu</button>
+            </div>
+        </div>
+
+        <div id="garage-screen" class="game-screen">
+            <h2>GARAGE</h2>
+            <div class="garage-content">
+                <button id="prevCarButton" class="arrow-button">&lt;</button>
+                <div class="car-display">
+                    <div id="selectedCarImage" style="width:100px; height:150px; border:2px solid white; background-color:grey;"></div>
+                    <h3 id="selectedCarName">Speedster 5000</h3>
+                    <div class="car-stats">
+                        <p>Top Speed: <span id="carTopSpeed">200 MPH</span></p>
+                        <p>Acceleration: <span id="carAcceleration">3.5s (0-60)</span></p>
+                        <p>Handling: <span id="carHandling">Excellent</span></p>
+                    </div>
+                </div>
+                <button id="nextCarButton" class="arrow-button">&gt;</button>
+            </div>
+            <div class="menu-buttons">
+                <button id="selectCarButton" class="menu-button">Select Car</button>
+                <button id="backToMainMenuFromGarage" class="menu-button">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <div id="settings-screen" class="game-screen">
+            <h2>SETTINGS</h2>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label for="volumeSlider">Volume:</label>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                    <span id="volumeValue">70%</span>
+                </div>
+                <div class="setting-item">
+                    <label for="difficultySelect">Difficulty:</label>
+                    <select id="difficultySelect">
+                        <option value="easy">Easy</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="graphicsQuality">Graphics Quality:</label>
+                    <select id="graphicsQuality">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                 <div class="setting-item">
+                    <label for="toggleMusic">Music:</label>
+                    <input type="checkbox" id="toggleMusic" checked>
+                </div>
+            </div>
+            <div class="menu-buttons">
+                <button id="saveSettingsButton" class="menu-button">Save Settings</button>
+                <button id="backToMainMenuFromSettings" class="menu-button">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <div id="controls-screen" class="game-screen">
+            <h2>CONTROLS</h2>
+            <div class="controls-content">
+                <p><strong>Accelerate:</strong> W / Up Arrow</p>
+                <p><strong>Brake / Reverse:</strong> S / Down Arrow</p>
+                <p><strong>Steer Left:</strong> A / Left Arrow</p>
+                <p><strong>Steer Right:</strong> D / Right Arrow</p>
+                <p><strong>Pause Game:</strong> P / Escape</p>
+            </div>
+            <div class="menu-buttons">
+                <button id="backToMainMenuFromControls" class="menu-button">Back to Main Menu</button>
+            </div>
+        </div>
+
+        <div id="about-screen" class="game-screen">
+            <h2>ABOUT</h2>
+            <div class="about-content">
+                <p><strong>Retro Racing Game</strong></p>
+                <p>Version: 1.0.0</p>
+                <p>Developed by: Your Name/AI Assistant</p>
+                <p>Inspired by classic arcade racers of the 90s.</p>
+                <p>Special thanks to open-source communities for resources and knowledge.</p>
+            </div>
+            <div class="menu-buttons">
+                <button id="backToMainMenuFromAbout" class="menu-button">Back to Main Menu</button>
             </div>
         </div>
 
         <div id="race-results-screen" class="game-screen">
-            <h2 class="screen-title" id="resultsTitle">Race Finished!</h2>
-            <div class="results-summary">
-                <p>Your Final Position: <span id="finalPosition">1st</span></p>
-                <p>Total Time: <span id="finalTime">00:00.00</span></p>
-                <h3>All Lap Times:</h3>
+            <h2 id="resultsTitle">Race Results</h2>
+            <div class="results-content">
+                <p>Your Position: <span id="finalPosition">1st</span></p>
+                <p>Total Race Time: <span id="finalTime">00:00.00</span></p>
+                <h3>Lap Times:</h3>
                 <ul id="finalLapTimesList">
                     </ul>
             </div>
-            <button id="playAgainButton" class="action-button">Play Again</button>
-            <button id="backToMainMenuFromResults" class="back-button">Main Menu</button>
+            <div class="menu-buttons">
+                <button id="playAgainButton" class="menu-button">Play Again</button>
+                <button id="backToMainMenuFromResults" class="menu-button">Quit to Menu</button>
+            </div>
         </div>
 
-        <div id="message-popup" class="game-overlay">
+        <div id="message-popup" class="overlay-menu">
             <p id="popup-text">This is a general message.</p>
-            <button id="closePopupButton" class="overlay-button">OK</button>
+            <button id="closePopupButton" class="menu-button">OK</button>
         </div>
 
-    </div> <script src="js/constants.js"></script> <script src="js/assetLoader.js"></script> <script src="js/gameStates.js"></script> <script src="js/inputHandler.js"></script> <script src="js/car.js"></script>         <script src="js/track.js"></script>        <script src="js/camera.js"></script>       <script src="js/physics.js"></script>      <script src="js/rendering.js"></script>    <script src="js/audioManager.js"></script> <script src="js/uiManager.js"></script>    <script src="js/gameLoop.js"></script>     <script src="js/main.js"></script>         </body>
+    </div>
+
+    <script type="module" src="js/constants.js"></script>
+    <script type="module" src="js/gameStates.js"></script>
+    <script type="module" src="js/inputHandler.js"></script>
+    <script type="module" src="js/car.js"></script>
+    <script type="module" src="js/track.js"></script>
+    <script type="module" src="js/camera.js"></script>
+    <script type="module" src="js/physics.js"></script>
+    <script type="module" src="js/rendering.js"></script>
+    <script type="module" src="js/uiManager.js"></script>
+    <script type="module" src="js/gameLoop.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
 </html>
