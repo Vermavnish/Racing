@@ -1,7 +1,7 @@
 // js/rendering.js
 
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from './constants.js';
-import assetLoader from './assetLoader.js'; // To get images
+// import assetLoader from './assetLoader.js'; // Removed assetLoader import
 
 class Rendering {
     /**
@@ -58,47 +58,34 @@ class Rendering {
         this.ctx.drawImage(this.offscreenCanvas, 0, 0);
 
         // This is where you might draw a minimap, or other UI elements that are always on top
-        // (though we have HTML UI elements, some might be drawn directly on canvas)
         this.drawMinimap(this.ctx, playerCar, track);
     }
 
     /**
-     * Draws the background (sky) for the game.
+     * Draws the background (sky) for the game using only colors.
      * @param {CanvasRenderingContext2D} ctx - The canvas context to draw on.
      */
     drawBackground(ctx) {
         // Simple gradient sky
         const gradient = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
-        gradient.addColorStop(0, '#87CEEB'); // Sky blue
-        gradient.addColorStop(0.5, '#ADD8E6'); // Lighter blue at horizon
+        gradient.addColorStop(0, COLORS.sky);
+        gradient.addColorStop(0.5, COLORS.sky); // Sky stays solid blue for simplicity
         gradient.addColorStop(1, COLORS.grassLight); // Blends into grass at horizon
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-        // You could draw a separate background image here if ASSET_PATHS.images.background exists
-        // const backgroundImage = assetLoader.getImage('background');
-        // if (backgroundImage) {
-        //     ctx.drawImage(backgroundImage, 0, 0, GAME_WIDTH, GAME_HEIGHT);
-        // }
+        // No background image drawing here.
     }
 
 
     /**
-     * Draws a single car on the canvas, handling its position and rotation.
+     * Draws a single car on the canvas, handling its position and rotation using basic shapes.
      * @param {CanvasRenderingContext2D} ctx - The canvas context to draw on.
      * @param {Car} car - The car object to draw.
      * @param {Camera} camera - The camera object.
      */
     drawCar(ctx, car, camera) {
-        if (!car.image) {
-            console.warn("Car image not available for drawing.");
-            return;
-        }
-
         // Project the car's 3D world position onto the 2D screen
-        // This is a simplified projection for the car, assuming it's always on the track
-        // The Y position for cars is actually their Z-world coordinate in this setup.
-        // We project the car's X and current Z (Y) to screen space relative to camera.
         const baseProjectionScale = GAME_WIDTH / 2 / Math.tan(camera.getFOV() / 2);
         const carZRelativeToCamera = (car.y - camera.getZ()) + camera.getHeight(); // Adjust Z for camera height
 
@@ -122,13 +109,19 @@ class Rendering {
         ctx.translate(screenX, screenY);
         ctx.rotate(car.angle); // Rotate the car sprite
 
-        ctx.drawImage(
-            car.image,
+        // Draw car as a colored rectangle
+        ctx.fillStyle = car.color; // Use the color property of the car
+        ctx.fillRect(
             -carWidth / 2, // Draw from center
             -carHeight / 2,
             carWidth,
             carHeight
         );
+
+        // Optional: Draw a "headlight" or direction indicator for the car
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(-carWidth / 4, -carHeight / 2, carWidth / 2, carHeight / 8); // Simple light at the front
+
         ctx.restore();
 
         // Optional: Draw a debug rectangle for collision
