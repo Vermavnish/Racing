@@ -1,86 +1,115 @@
 // js/constants.js
 
-const GAME_WIDTH = 1280;
-const GAME_HEIGHT = 720;
+// Game Configuration
+const GAME_WIDTH = 1280; // Width of the game canvas
+const GAME_HEIGHT = 720; // Height of the game canvas
 
-// Game States
-const GAME_STATE = {
-    LOADING: 'loading',
-    MAIN_MENU: 'mainMenu',
-    GARAGE: 'garage',
-    SETTINGS: 'settings',
-    CONTROLS: 'controls',
-    ABOUT: 'about',
-    IN_GAME: 'inGame',
-    PAUSED: 'paused',
-    RACE_RESULTS: 'raceResults'
+// Game Loop Settings
+const FPS = 60; // Frames per second
+const FRAME_INTERVAL = 1000 / FPS; // Milliseconds per frame
+
+// UI Update Interval (to prevent excessive DOM manipulation)
+const UI_UPDATE_INTERVAL = 100; // Update UI every 100ms
+
+// Car Physics Constants
+const CAR_MAX_SPEED = 300; // Max speed in units/second (e.g., pixels/second, scaled for projection)
+const CAR_ACCELERATION = 250; // Acceleration rate in units/second^2
+const CAR_DECELERATION = 150; // Deceleration rate when not accelerating
+const CAR_BRAKING_POWER = 400; // Braking rate
+const CAR_FRICTION = 0.98; // Friction applied every second (0.98 means 2% speed loss per second if no input)
+const CAR_TURN_SPEED = 3.5; // Radians per second at full speed
+const CAR_REVERSE_SPEED_MULTIPLIER = 0.3; // Max reverse speed is 30% of max forward speed
+
+// Track Generation Constants
+const SEGMENT_LENGTH = 100; // Length of a single road segment in world units
+const TRACK_WIDTH = 500; // Width of the road in world units
+const RUMBLE_LENGTH = 3; // Number of segments for one rumble strip pattern (e.g., 3 segments white, 3 segments red)
+const ROAD_SEGMENTS = 1000; // Total number of road segments (determines track length)
+const TOTAL_LAPS = 3; // Total laps to complete the race
+
+// Camera & Projection Constants
+const CAMERA_HEIGHT = 1000; // Height of the camera above the road
+const CAMERA_DEPTH = 0.92; // Camera's distance from the projection plane (influences horizon position and perspective)
+const FIELD_OF_VIEW = 1.1; // Horizontal field of view in radians (approx 63 degrees)
+const FOG_DENSITY = 3; // How quickly fog intensifies with distance (higher means more fog closer)
+
+
+// Colors (Hexadecimal or RGB)
+const COLORS = {
+    roadLight: '#6B6B6B', // Light grey for road
+    roadDark: '#626262',  // Dark grey for road
+    grassLight: '#106B10', // Light green for grass
+    grassDark: '#0A400A',  // Dark green for grass
+    rumbleWhite: '#FFFFFF', // White for rumble strips
+    rumbleRed: '#BB0000',   // Red for rumble strips
+    sky: '#87CEEB' // Sky blue
 };
 
-// Car Physics Constants (adjust these to change car behavior)
-const CAR_MAX_SPEED = 250; // Max speed in units per second (e.g., pixels/sec)
-const CAR_ACCELERATION = 0.05; // How quickly car speeds up
-const CAR_DECELERATION = 0.03; // How quickly car slows down naturally
-const CAR_BRAKING_POWER = 0.1; // How quickly car slows down when braking
-const CAR_TURN_SPEED = 0.003; // How quickly car turns (radians per update)
-const CAR_FRICTION = 0.98; // Reduces speed over time (1 = no friction, 0 = stops instantly)
-const CAR_REVERSE_SPEED_MULTIPLIER = 0.4; // Max speed when reversing
-
-// Track Constants
-const TRACK_WIDTH = 800; // Width of the drivable track area
-const SEGMENT_LENGTH = 100; // Length of one track segment (controls track detail)
-const RUMBLE_LENGTH = 3; // Number of track segments for rumble strips
-const ROAD_SEGMENTS = 200; // Total number of segments in the track (influences track length)
-const FOG_DENSITY = 0.05; // How quickly fog appears
-
-// Camera Constants
-const CAMERA_HEIGHT = 1000; // Distance of the camera from the track
-const CAMERA_DEPTH = 0.8; // Perspective depth (higher = more perspective distortion)
-const FIELD_OF_VIEW = Math.PI / 3; // Angle of the camera's view
-
-// UI Constants
-const UI_UPDATE_INTERVAL = 100; // How often (ms) UI elements like speedometer update
-
-// Asset Paths (Example - you'll need actual images/sounds)
+// Asset Paths (Using direct links for testing - RELIABILITY NOT GUARANTEED)
 const ASSET_PATHS = {
     images: {
-        background:<a href="https://imgbb.com/"><img src="https://i.ibb.co/9jdnQwy/background.jpg" alt="background" border="0"></a>,
-        car2 :<a href="https://imgbb.com/"><img src="https://i.ibb.co/bMLbd0vB/car1.png" alt="car1" border="0"></a>
+        // Car images (finding direct, stable links with transparency is hard)
+        // These are generic and may have white backgrounds or be low res.
+        car1: 'https://www.topviewpng.com/uploads/preview/top-view-of-a-small-red-car-11563229762n2z9s7g4q0.png', // Small red car
+        car2: 'https://png.pngtree.com/png-vector/20220627/ourmid/pngtree-top-view-blue-car-clip-art-png-image_5360980.png', // Small blue car
+        
+        // Tree/Bush images
+        tree1: 'https://www.pngall.com/wp-content/uploads/11/Small-Pine-Tree-PNG-Image.png', // Generic pine tree
+        bush1: 'https://www.pngall.com/wp-content/uploads/11/Bush-PNG-Pic.png', // Generic bush
 
-        tree1: 'assets/images/objects/tree1.png',
-        bush1: 'assets/images/objects/bush1.png',
-        // Add more car images, track textures, obstacles etc.
+        // Background (simple pattern or sky - a single background image might not fit seamlessly)
+        // This is a textured background, not a continuous road.
+        background: 'https://i.ibb.co/sK6f8s2/seamless-road-texture.png', // Example of a road texture (if used for background)
     },
     sounds: {
-        engineIdle: 'assets/audio/engine_idle.mp3',
-        engineAccelerate: 'assets/audio/engine_accel.mp3',
-        skid: 'assets/audio/skid.mp3',
-        collision: 'assets/audio/collision.mp3',
-        backgroundMusic: 'assets/audio/bg_music.mp3',
-        buttonClick: 'assets/audio/button_click.mp3',
-        // Add more sound effects
+        // Sound effects (Finding direct, stable, and appropriately themed MP3s is challenging)
+        // These are examples and might be generic short clips.
+        engineIdle: 'https://www.fesliyanstudios.com/play-mp3/600', // Short loopable sound
+        engineAccelerate: 'https://www.fesliyanstudios.com/play-mp3/601', // Short sound
+        skid: 'https://www.fesliyanstudios.com/play-mp3/340', // Tire screech
+        collision: 'https://www.fesliyanstudios.com/play-mp3/305', // Crash sound effect
+        backgroundMusic: 'https://www.fesliyanstudios.com/play-mp3/1188', // Generic upbeat music
+        buttonClick: 'https://www.fesliyanstudios.com/play-mp3/329', // UI click
     }
 };
 
-// Other Game Constants
-const TOTAL_LAPS = 3;
-const FONT_PRIMARY = 'Orbitron, sans-serif';
-const FONT_SECONDARY = 'Roboto, sans-serif';
-const COLORS = {
-    roadLight: '#696969',
-    roadDark: '#666666',
-    grassLight: '#105B10',
-    grassDark: '#0A400A',
-    rumbleRed: '#FF0000',
-    rumbleWhite: '#FFFFFF',
-    fog: '#ADD8E6' // Light blue for fog
+
+// Game State Definitions
+const GAME_STATE = {
+    LOADING: 'LOADING',
+    MAIN_MENU: 'MAIN_MENU',
+    IN_GAME: 'IN_GAME',
+    PAUSED: 'PAUSED',
+    RACE_RESULTS: 'RACE_RESULTS',
+    SETTINGS: 'SETTINGS',
+    CONTROLS: 'CONTROLS',
+    ABOUT: 'ABOUT',
+    GARAGE: 'GARAGE'
 };
 
 export {
-    GAME_WIDTH, GAME_HEIGHT, GAME_STATE,
-    CAR_MAX_SPEED, CAR_ACCELERATION, CAR_DECELERATION, CAR_BRAKING_POWER, CAR_TURN_SPEED, CAR_FRICTION, CAR_REVERSE_SPEED_MULTIPLIER,
-    TRACK_WIDTH, SEGMENT_LENGTH, RUMBLE_LENGTH, ROAD_SEGMENTS, FOG_DENSITY,
-    CAMERA_HEIGHT, CAMERA_DEPTH, FIELD_OF_VIEW,
+    GAME_WIDTH,
+    GAME_HEIGHT,
+    FPS,
+    FRAME_INTERVAL,
     UI_UPDATE_INTERVAL,
+    CAR_MAX_SPEED,
+    CAR_ACCELERATION,
+    CAR_DECELERATION,
+    CAR_BRAKING_POWER,
+    CAR_FRICTION,
+    CAR_TURN_SPEED,
+    CAR_REVERSE_SPEED_MULTIPLIER,
+    SEGMENT_LENGTH,
+    TRACK_WIDTH,
+    RUMBLE_LENGTH,
+    ROAD_SEGMENTS,
+    TOTAL_LAPS,
+    CAMERA_HEIGHT,
+    CAMERA_DEPTH,
+    FIELD_OF_VIEW,
+    FOG_DENSITY,
+    COLORS,
     ASSET_PATHS,
-    TOTAL_LAPS, FONT_PRIMARY, FONT_SECONDARY, COLORS
+    GAME_STATE
 };
