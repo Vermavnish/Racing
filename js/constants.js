@@ -45,38 +45,11 @@ const COLORS = {
     sky: '#87CEEB' // Sky blue
 };
 
-// Asset Paths (Using direct links for testing - RELIABILITY NOT GUARANTEED)
-const ASSET_PATHS = {
-    images: {
-        // Car images (finding direct, stable links with transparency is hard)
-        // These are generic and may have white backgrounds or be low res.
-        car1: 'https://www.topviewpng.com/uploads/preview/top-view-of-a-small-red-car-11563229762n2z9s7g4q0.png', // Small red car
-        car2: 'https://png.pngtree.com/png-vector/20220627/ourmid/pngtree-top-view-blue-car-clip-art-png-image_5360980.png', // Small blue car
-        
-        // Tree/Bush images
-        tree1: 'https://www.pngall.com/wp-content/uploads/11/Small-Pine-Tree-PNG-Image.png', // Generic pine tree
-        bush1: 'https://www.pngall.com/wp-content/uploads/11/Bush-PNG-Pic.png', // Generic bush
-
-        // Background (simple pattern or sky - a single background image might not fit seamlessly)
-        // This is a textured background, not a continuous road.
-        background: 'https://i.ibb.co/sK6f8s2/seamless-road-texture.png', // Example of a road texture (if used for background)
-    },
-    sounds: {
-        // Sound effects (Finding direct, stable, and appropriately themed MP3s is challenging)
-        // These are examples and might be generic short clips.
-        engineIdle: 'https://www.fesliyanstudios.com/play-mp3/600', // Short loopable sound
-        engineAccelerate: 'https://www.fesliyanstudios.com/play-mp3/601', // Short sound
-        skid: 'https://www.fesliyanstudios.com/play-mp3/340', // Tire screech
-        collision: 'https://www.fesliyanstudios.com/play-mp3/305', // Crash sound effect
-        backgroundMusic: 'https://www.fesliyanstudios.com/play-mp3/1188', // Generic upbeat music
-        buttonClick: 'https://www.fesliyanstudios.com/play-mp3/329', // UI click
-    }
-};
-
+// ASSET_PATHS object removed entirely as we're not using assets
 
 // Game State Definitions
 const GAME_STATE = {
-    LOADING: 'LOADING',
+    LOADING: 'LOADING', // Still good to have a loading state for initial setup
     MAIN_MENU: 'MAIN_MENU',
     IN_GAME: 'IN_GAME',
     PAUSED: 'PAUSED',
@@ -110,6 +83,5 @@ export {
     FIELD_OF_VIEW,
     FOG_DENSITY,
     COLORS,
-    ASSET_PATHS,
     GAME_STATE
 };
