@@ -43,9 +43,9 @@ const UI_UPDATE_INTERVAL = 100; // How often (ms) UI elements like speedometer u
 // Asset Paths (Example - you'll need actual images/sounds)
 const ASSET_PATHS = {
     images: {
-        background: 'assets/images/background.png',
-        car1: 'assets/images/cars/car1.png',
-        car2: 'assets/images/cars/car2.png',
+        background:<a href="https://imgbb.com/"><img src="https://i.ibb.co/9jdnQwy/background.jpg" alt="background" border="0"></a>,
+        car2 :<a href="https://imgbb.com/"><img src="https://i.ibb.co/bMLbd0vB/car1.png" alt="car1" border="0"></a>
+
         tree1: 'assets/images/objects/tree1.png',
         bush1: 'assets/images/objects/bush1.png',
         // Add more car images, track textures, obstacles etc.
