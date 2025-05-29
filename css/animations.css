@@ -1,0 +1,58 @@
+/* Animations for Game Elements */
+
+@keyframes pulseTitle {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounceButton {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* Apply animations to specific elements where needed */
+#main-menu-screen .menu-button {
+    animation: fadeIn 1s ease-out forwards;
+    /* Delay each button for a staggered effect */
+    animation-delay: var(--button-delay, 0s);
+}
+#main-menu-screen .menu-button:nth-child(1) { --button-delay: 0.2s; }
+#main-menu-screen .menu-button:nth-child(2) { --button-delay: 0.4s; }
+#main-menu-screen .menu-button:nth-child(3) { --button-delay: 0.6s; }
+#main-menu-screen .menu-button:nth-child(4) { --button-delay: 0.8s; }
+#main-menu-screen .menu-button:nth-child(5) { --button-delay: 1.0s; }
+
+
+/* UI Panel Slide In Animation */
+.in-game-ui .ui-panel {
+    animation: fadeIn 0.5s ease-out forwards;
+    animation-delay: 1.5s; /* Appear after game loads */
+    opacity: 0; /* Initially hidden */
+}
+
+/* Example: Add some hover animation to UI elements */
+.ui-panel:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+/* Add more complex animations here for cars, explosions, etc.,
+   which would typically be handled by JS manipulating canvas,
+   but could involve CSS if using HTML elements for specific effects. */

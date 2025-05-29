@@ -1,0 +1,288 @@
+/* General Resets and Base Styles */
+:root {
+    /* Define some CSS Variables for easy theme changes */
+    --game-bg-color: #1a1a2e; /* Dark background */
+    --primary-color: #0f4c75; /* Blue */
+    --secondary-color: #3282b8; /* Lighter Blue */
+    --accent-color: #bbe1fa; /* Lightest Blue */
+    --text-color-light: #e0e0e0;
+    --text-color-dark: #2c2c2c;
+    --button-bg: #4a90e2;
+    --button-hover-bg: #357ABD;
+    --button-text: #ffffff;
+    --border-color: #0c2d48;
+    --panel-bg: rgba(20, 20, 40, 0.85); /* Slightly transparent dark panel */
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+
+    --font-family-primary: 'Orbitron', sans-serif; /* Futuristic font */
+    --font-family-secondary: 'Roboto', sans-serif; /* Readable font */
+}
+
+/* Import Google Fonts (example - you'd add link in HTML head or @import here) */
+/* @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap'); */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling, as the game fills the screen */
+    font-family: var(--font-family-secondary);
+    color: var(--text-color-light);
+    background: var(--game-bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none; /* Prevent text selection in game */
+}
+
+/* Game Wrapper - Main container for all screens */
+#game-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1280px; /* Max width for desktop view */
+    max-height: 720px; /* Max height for desktop view */
+    background: var(--primary-color); /* Fallback or outer border */
+    border: 5px solid var(--border-color);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+    overflow: hidden; /* Hide anything overflowing the game area */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Game Screens - General styling for all separate game views */
+.game-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--game-bg-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Hidden by default */
+    pointer-events: none; /* Don't capture mouse events when hidden */
+    transition: opacity 0.5s ease-in-out; /* Smooth transition when shown/hidden */
+    z-index: 10; /* Ensure screens are above canvas initially */
+    padding: 20px; /* Internal padding for content */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.game-screen.active-screen {
+    opacity: 1; /* Show active screen */
+    pointer-events: all; /* Capture mouse events when active */
+    z-index: 20; /* Active screen is on top */
+}
+
+/* Headings within screens */
+.screen-title {
+    font-family: var(--font-family-primary);
+    font-size: 3em;
+    color: var(--accent-color);
+    margin-bottom: 40px;
+    text-shadow: 0 0 15px var(--secondary-color);
+}
+
+.game-title {
+    font-family: var(--font-family-primary);
+    font-size: 5em;
+    color: var(--accent-color);
+    margin-bottom: 60px;
+    text-shadow: 0 0 20px var(--secondary-color), 0 0 40px var(--primary-color);
+    letter-spacing: 5px;
+    animation: pulseTitle 2s infinite alternate;
+}
+
+/* Buttons - General styling for all interactive buttons */
+.menu-button, .action-button, .back-button, .nav-button, .overlay-button {
+    font-family: var(--font-family-primary);
+    font-size: 1.5em;
+    padding: 15px 30px;
+    margin: 10px;
+    border: 3px solid var(--secondary-color);
+    border-radius: 8px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.menu-button:hover, .action-button:hover, .back-button:hover, .nav-button:hover, .overlay-button:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-3px);
+    border-color: var(--accent-color);
+}
+
+.menu-button:active, .action-button:active, .back-button:active, .nav-button:active, .overlay-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.back-button {
+    background-color: var(--primary-color);
+    border-color: var(--accent-color);
+    font-size: 1.2em;
+    padding: 10px 20px;
+}
+.back-button:hover {
+    background-color: #2c587c;
+}
+
+/* Specific screen layouts */
+#main-menu-screen .menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between buttons */
+}
+#main-menu-screen .game-version {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+/* Game Canvas - The actual game rendering area */
+#gameCanvas {
+    position: absolute; /* Allows overlaying UI elements */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000; /* Black background for canvas */
+    z-index: 5; /* Below UI screens */
+}
+
+/* Game Overlay for Pause Menu and Popups */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--overlay-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 30; /* Above game screen */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.game-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.overlay-title {
+    font-family: var(--font-family-primary);
+    font-size: 3em;
+    color: var(--accent-color);
+    margin-bottom: 40px;
+    text-shadow: 0 0 10px var(--secondary-color);
+}
+
+.overlay-button {
+    font-size: 1.3em;
+    padding: 12px 25px;
+    margin: 8px;
+    background-color: var(--secondary-color);
+    border-color: var(--accent-color);
+}
+.overlay-button:hover {
+    background-color: #2d73a7;
+}
+
+
+/* Responsive adjustments (basic) */
+@media (max-width: 768px) {
+    #game-wrapper {
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        border: none;
+        box-shadow: none;
+    }
+
+    .game-title {
+        font-size: 3.5em;
+        margin-bottom: 40px;
+    }
+
+    .screen-title {
+        font-size: 2.5em;
+        margin-bottom: 30px;
+    }
+
+    .menu-button, .action-button, .back-button, .nav-button, .overlay-button {
+        font-size: 1.2em;
+        padding: 12px 25px;
+    }
+}
+
+/* Basic Loader for Loading Screen */
+.loader {
+    border: 8px solid var(--secondary-color);
+    border-top: 8px solid var(--accent-color);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-progress-bar-container {
+    width: 60%;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+#loading-progress-bar {
+    width: 0%; /* Will be controlled by JS */
+    height: 100%;
+    background-color: var(--accent-color);
+    border-radius: 10px;
+    transition: width 0.1s linear; /* Smooth progress bar movement */
+}
+
+#loading-status-text {
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: var(--accent-color);
+}
+
+/* Other general text styles */
+p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+.key-display {
+    background-color: var(--primary-color);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: var(--font-family-primary);
+    color: var(--accent-color);
+    border: 1px solid var(--secondary-color);
+}

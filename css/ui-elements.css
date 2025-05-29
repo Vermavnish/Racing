@@ -1,0 +1,387 @@
+/* Styling for specific UI elements like settings, garage, in-game panels */
+
+/* Garage Screen */
+#garage-screen {
+    justify-content: flex-start; /* Align content to top */
+    padding-top: 5%;
+}
+#garage-screen .car-selection-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: var(--panel-bg);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+}
+#garage-screen .car-display {
+    text-align: center;
+    margin: 0 20px;
+}
+#garage-screen #selectedCarImage {
+    max-width: 300px;
+    height: auto;
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease;
+}
+#garage-screen #selectedCarImage:hover {
+    transform: scale(1.05);
+}
+#garage-screen #selectedCarName {
+    font-family: var(--font-family-primary);
+    font-size: 1.8em;
+    color: var(--accent-color);
+    margin-top: 15px;
+}
+#garage-screen .nav-button {
+    font-size: 2em;
+    padding: 10px 18px;
+    border-radius: 50%; /* Make them circular */
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary-color);
+    border-color: var(--secondary-color);
+}
+#garage-screen .nav-button:hover {
+    background-color: #2c587c;
+}
+#garage-screen .car-stats {
+    background-color: var(--panel-bg);
+    padding: 20px 30px;
+    border-radius: 10px;
+    margin-top: 20px;
+    width: 80%;
+    max-width: 500px;
+    text-align: left;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+}
+#garage-screen .car-stats h3 {
+    font-family: var(--font-family-primary);
+    color: var(--accent-color);
+    margin-bottom: 15px;
+    font-size: 1.6em;
+}
+#garage-screen .car-stats p {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+#garage-screen .car-stats span {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+
+/* Settings Screen */
+#settings-screen, #controls-screen, #about-screen {
+    justify-content: flex-start;
+    padding-top: 5%;
+}
+#settings-screen .setting-item {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 25px;
+    font-size: 1.2em;
+    background-color: var(--panel-bg);
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+#settings-screen .setting-item label {
+    flex: 1;
+    text-align: left;
+    margin-right: 20px;
+    color: var(--accent-color);
+}
+#settings-screen .setting-item .slider,
+#settings-screen .setting-item .dropdown {
+    flex: 2;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color);
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+#settings-screen .setting-item .slider:focus,
+#settings-screen .setting-item .dropdown:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-color);
+}
+#settings-screen .setting-item input[type="range"] {
+    -webkit-appearance: none; /* Remove default styling */
+    height: 8px;
+    cursor: pointer;
+}
+#settings-screen .setting-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    margin-top: -6px; /* Adjust thumb position */
+    box-shadow: 0 0 5px var(--accent-color);
+}
+#settings-screen .setting-item input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    box-shadow: 0 0 5px var(--accent-color);
+}
+
+#settings-screen .setting-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    accent-color: var(--accent-color); /* Changes checkbox color */
+}
+#settings-screen .setting-item span { /* For volume value */
+    margin-left: 10px;
+    color: var(--accent-color);
+}
+
+/* Controls Screen */
+#controls-screen .controls-list {
+    background-color: var(--panel-bg);
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+}
+#controls-screen .controls-list p {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#controls-screen .controls-list p strong {
+    color: var(--accent-color);
+}
+
+
+/* About Screen */
+#about-screen p {
+    max-width: 700px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    line-height: 1.8;
+}
+
+
+/* In-Game UI Elements */
+.in-game-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Crucial: Allows clicks/input to pass through to canvas */
+    z-index: 10; /* Above canvas, below game-screens */
+}
+
+.ui-panel {
+    background-color: var(--panel-bg);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    font-family: var(--font-family-primary);
+    color: var(--accent-color);
+    font-size: 1.2em;
+    position: absolute; /* Position individually */
+    pointer-events: auto; /* Make panels interactive if needed (e.g., for minimap zoom) */
+}
+
+#speedometer {
+    top: 20px;
+    left: 20px;
+    min-width: 150px;
+    text-align: center;
+    border-left: 5px solid var(--accent-color);
+}
+#speedometer #currentSpeedValue {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffcc00; /* Yellow for speed */
+}
+
+#lapCounter {
+    top: 20px;
+    right: 20px;
+    min-width: 120px;
+    text-align: center;
+    border-right: 5px solid var(--accent-color);
+}
+#lapCounter #currentLapValue, #lapCounter #totalLapsValue {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #aaff00; /* Green for laps */
+}
+
+#timer {
+    top: 80px;
+    right: 20px;
+    min-width: 150px;
+    text-align: center;
+    border-right: 5px solid var(--accent-color);
+}
+#timer #gameTimerValue {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #ff6600; /* Orange for time */
+}
+
+#position {
+    top: 140px;
+    right: 20px;
+    min-width: 120px;
+    text-align: center;
+    border-right: 5px solid var(--accent-color);
+}
+#position #playerRankValue, #position #totalRacersValue {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #00eeff; /* Cyan for position */
+}
+
+#lapTimesDisplay {
+    bottom: 20px;
+    left: 20px;
+    max-height: 200px; /* Limit height to allow scrolling if many laps */
+    overflow-y: auto; /* Enable scroll if content overflows */
+    width: 250px;
+    border-left: 5px solid var(--accent-color);
+}
+#lapTimesDisplay h3 {
+    font-family: var(--font-family-primary);
+    font-size: 1.2em;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    text-align: center;
+}
+#lapTimesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#lapTimesList li {
+    font-size: 1em;
+    margin-bottom: 5px;
+    padding: 3px 0;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.2);
+}
+#lapTimesList li:last-child {
+    border-bottom: none;
+}
+#lapTimesList li span {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+#minimapContainer {
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    height: 150px;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker background for minimap */
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    overflow: hidden; /* Important for minimap drawing */
+    border-radius: 10px;
+}
+/* Minimap content will be drawn directly onto its own canvas by JS */
+
+
+/* Race Results / Game Over Screen */
+#race-results-screen .results-summary {
+    background-color: var(--panel-bg);
+    padding: 30px;
+    border-radius: 10px;
+    margin-top: 30px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+}
+#race-results-screen .results-summary p {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+}
+#race-results-screen .results-summary span {
+    font-family: var(--font-family-primary);
+    font-size: 1.6em;
+    color: #ffdf00; /* Gold color for final results */
+    font-weight: bold;
+}
+#race-results-screen .results-summary h3 {
+    font-family: var(--font-family-primary);
+    font-size: 1.5em;
+    color: var(--secondary-color);
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+#finalLapTimesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+}
+#finalLapTimesList li {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: var(--text-color-light);
+}
+#finalLapTimesList li span {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+
+/* Message Popup */
+#message-popup {
+    background-color: var(--overlay-bg);
+    z-index: 40; /* On top of everything */
+}
+#message-popup #popup-text {
+    background-color: var(--panel-bg);
+    padding: 30px 40px;
+    border-radius: 10px;
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+    font-size: 1.5em;
+    color: var(--text-color-light);
+    margin-bottom: 30px;
+    max-width: 80%;
+}
+#message-popup .overlay-button {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+#message-popup .overlay-button:hover {
+    background-color: #cce9ff;
+}
